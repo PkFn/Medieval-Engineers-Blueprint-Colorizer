@@ -168,9 +168,10 @@ namespace MEPaintedBlock
             return col;
         }
 
-        public void changeColor(MyMeHsv newColor)
+        public void changeColor(XmlDocument doc, string filePath, MyMeHsv newColor)
         {
-            dataNode.InnerText = String.Format("{0:000.0}+{1:000.0}-{2:000.0}", newColor.h, newColor.s, newColor.v);
+            dataNode.InnerText = String.Format("{0:000}+{1:000}-{2:000}", newColor.h, newColor.s, newColor.v);
+            doc.Save(filePath);
         }
     }
     public class MyColorModifiers

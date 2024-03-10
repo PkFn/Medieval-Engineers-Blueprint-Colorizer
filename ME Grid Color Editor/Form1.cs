@@ -52,12 +52,17 @@ namespace ME_Grid_Color_Editor
                 return Color.FromArgb(255, v, p, q);
         }
 
-        private void fileButton_Click(object sender, EventArgs e)
+        public static void ColorToHSV(Color color, out double hue, out double saturation, out double value)
         {
-            openFileDialog1.ShowDialog();
+            int max = Math.Max(color.R, Math.Max(color.G, color.B));
+            int min = Math.Min(color.R, Math.Min(color.G, color.B));
+
+            hue = color.GetHue();
+            saturation = (max == 0) ? 0 : 1d - (1d * min / max);
+            value = max / 255d;
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void reloadXml()
         {
             xmlDoc = new XmlDocument();
             xmlDoc.Load(openFileDialog1.FileName);
@@ -66,26 +71,22 @@ namespace ME_Grid_Color_Editor
 
             affectedBlockCount.Items.Clear();
 
-            foreach(MyColorNode node in colorModifiers.colorNodes)
+            foreach (MyColorNode node in colorModifiers.colorNodes)
             {
                 affectedBlockCount.Items.Add(node.ToString());
             }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void reloadColor()
         {
-            if(affectedBlockCount.SelectedItem == null)
-            {
-                return;
-            }
             foreach (MyColorNode node in colorModifiers.colorNodes)
             {
-                if(node.isMyString(affectedBlockCount.SelectedItem.ToString()))
+                if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
                 {
                     MyMeHsv hsv = node.getColor();
 
                     affectedBlockNames.Items.Clear();
-                    foreach(string name in node.affectedObjectsSubtypes)
+                    foreach (string name in node.affectedObjectsSubtypes)
                     {
                         affectedBlockNames.Items.Add(name);
                     }
@@ -95,6 +96,24 @@ namespace ME_Grid_Color_Editor
                     return;
                 }
             }
+        }
+        private void fileButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+        }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            reloadXml();
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(affectedBlockCount.SelectedItem == null)
+            {
+                return;
+            }
+            reloadColor();
         }
 
         private void Form1_MouseEnter(object sender, EventArgs e)
@@ -119,7 +138,39 @@ namespace ME_Grid_Color_Editor
 
         private void buttonReplace_Click(object sender, EventArgs e)
         {
+            if(affectedBlockCount.Items.Count == 0 || xmlDoc == null)
+            {
+                return;
+            }
 
+            MyMeHsv hsv = new MyMeHsv();
+
+            double h, s, v;
+
+            ColorToHSV(colorDialog1.Color, out h, out s, out v);
+            hsv.h = (int)h;
+            hsv.s = (int)(s * 100);
+            hsv.v = (int)(v * 100);
+
+            if(hsv.h > 360) hsv.h = 360;
+            if(hsv.s > 100) hsv.s = 100;
+            if(hsv.v > 100) hsv.v = 100;
+
+            foreach (MyColorNode node in colorModifiers.colorNodes)
+            {
+                if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
+                {
+                    node.changeColor(xmlDoc, openFileDialog1.FileName, hsv);
+                    reloadXml();
+                    if(affectedBlockCount.Items.Count > 0)
+                    {
+                        affectedBlockCount.SelectedIndex = 0;
+                        reloadColor();
+                    }
+                    
+                    return;
+                }
+            }
         }
     }
 }
