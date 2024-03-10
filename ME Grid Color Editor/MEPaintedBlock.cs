@@ -5,21 +5,11 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
+using MEPaintedDefs;
+
 namespace MEPaintedBlock
 {
-    public struct MyMeHsv
-    {
-        public int h;
-        public int s;
-        public int v;
-        public MyMeHsv(int _h, int _s, int _v)
-        {
-            h = _h;
-            s = _s;
-            v = _v;
-        }
-    }
-    public class MyColorNode
+    public class MyBlockColorNode
     {
         string myString;
         XmlNode dataNode;
@@ -78,7 +68,7 @@ namespace MEPaintedBlock
 
             return ret;
         }
-        public MyColorNode(XmlNode colorNode)
+        public MyBlockColorNode(XmlNode colorNode)
         {
             dataNode = null;
             affectedObjectsIds = new List<string>();
@@ -115,11 +105,11 @@ namespace MEPaintedBlock
 
             if (affectedObjects == 1)
             {
-                myString = String.Format("Color {0} : {1} block", data, affectedObjects);
+                myString = String.Format("[Block] {0} : {1} block", data, affectedObjects);
             }
             else
             {
-                myString = String.Format("Color {0} : {1} blocks", data, affectedObjects);
+                myString = String.Format("[Block] {0} : {1} blocks", data, affectedObjects);
             }
         }
         public override string ToString()
@@ -179,76 +169,6 @@ namespace MEPaintedBlock
             else
             {
                 dataNode.InnerText = String.Format("{0:000}+{1:000}-{2:000}", newColor.h, newColor.s, -newColor.v);
-            }
-        }
-    }
-    public class MyColorModifiers
-    {
-        XmlNode modifierComponent;
-        public List<MyColorNode> colorNodes { get; private set; }
-        public MyColorModifiers(XmlDocument doc)
-        {
-            modifierComponent = null;
-            colorNodes = new List<MyColorNode>();
-
-            foreach (XmlNode component in doc.GetElementsByTagName("Component"))
-            {
-                foreach (XmlAttribute attribute in component.Attributes)
-                {
-                    if (attribute.Name == "xsi:type")
-                    {
-                        if (attribute.InnerText == "MyObjectBuilder_EquiGridModifierComponent")
-                        {
-                            modifierComponent = component;
-                        }
-                    }
-                }
-            }
-
-            if(modifierComponent != null)
-            {
-                bool hasModifier = false;
-
-                foreach (XmlNode child in doc.GetElementsByTagName("Storage"))
-                {
-                    foreach(XmlNode modifier in child.ChildNodes)
-                    {
-                        if(modifier.Name == "Modifier")
-                        {
-                            foreach (XmlAttribute attribute in modifier.Attributes)
-                            {
-                                if (attribute.InnerText == "EquiModifierChangeColorDefinition")
-                                {
-                                    hasModifier = true;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if(hasModifier)
-                    {
-                        colorNodes.Add(new MyColorNode(child));
-                    }
-                }
-            }
-        }
-
-        public override string ToString()
-        {
-            string ret = "";
-            foreach (MyColorNode node in colorNodes)
-            {
-                ret += node.ToString();
-                ret += '\n';
-            }
-            return ret;
-        }
-
-        public void updateAffectedSubtypes(XmlDocument doc)
-        {
-            foreach(MyColorNode node in colorNodes)
-            {
-                node.updateAffectedSubtypes(doc);
             }
         }
     }

@@ -8,7 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+
+using MEPaintedGroups;
 using MEPaintedBlock;
+using MEPaintedCanvas;
+using MEPaintedDefs;
 
 namespace ME_Grid_Color_Editor
 {
@@ -75,7 +79,7 @@ namespace ME_Grid_Color_Editor
 
             affectedBlockCount.Items.Clear();
 
-            foreach (MyColorNode node in colorModifiers.colorNodes)
+            foreach (MyBlockColorNode node in colorModifiers.blockColorNodes)
             {
                 affectedBlockCount.Items.Add(node.ToString());
             }
@@ -92,7 +96,7 @@ namespace ME_Grid_Color_Editor
 
         private void reloadColor()
         {
-            foreach (MyColorNode node in colorModifiers.colorNodes)
+            foreach (MyBlockColorNode node in colorModifiers.blockColorNodes)
             {
                 if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
                 {
@@ -169,7 +173,7 @@ namespace ME_Grid_Color_Editor
             if(hsv.s > 100) hsv.s = 100;
             if(hsv.v > 100) hsv.v = 100;
 
-            foreach (MyColorNode node in colorModifiers.colorNodes)
+            foreach (MyBlockColorNode node in colorModifiers.blockColorNodes)
             {
                 if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
                 {

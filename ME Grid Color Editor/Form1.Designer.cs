@@ -106,7 +106,7 @@
             this.groupBox1.Size = new System.Drawing.Size(250, 250);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Affected block groups";
+            this.groupBox1.Text = "Affected groups";
             // 
             // groupBox2
             // 
@@ -116,7 +116,7 @@
             this.groupBox2.Size = new System.Drawing.Size(250, 250);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Affected block subtypes";
+            this.groupBox2.Text = "Affected subtypes";
             // 
             // groupBox3
             // 

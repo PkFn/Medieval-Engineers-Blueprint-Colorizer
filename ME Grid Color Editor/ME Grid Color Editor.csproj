@@ -54,6 +54,9 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="MEPaintedBlock.cs" />
+    <Compile Include="MEPaintedCanvas.cs" />
+    <Compile Include="MEPaintedDefs.cs" />
+    <Compile Include="MEPaintedGroups.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
