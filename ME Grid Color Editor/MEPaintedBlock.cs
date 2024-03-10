@@ -157,7 +157,8 @@ namespace MEPaintedBlock
             {
                 col.h = Convert.ToInt32("" + data[0] + data[1] + data[2]);
                 col.s = Convert.ToInt32("" + data[4] + data[5] + data[6]);
-                col.v = Convert.ToInt32("" + data[8] + data[9] + data[10]);
+                col.v = Convert.ToInt32("" + data[7] + data[8] + data[9] + data[10]);
+                col.v += 70;
             }
             catch
             {
@@ -171,7 +172,14 @@ namespace MEPaintedBlock
 
         public void changeColor(MyMeHsv newColor)
         {
-            dataNode.InnerText = String.Format("{0:000}+{1:000}-{2:000}", newColor.h, newColor.s, newColor.v);
+            if(newColor.v > 0)
+            {
+                dataNode.InnerText = String.Format("{0:000}+{1:000}+{2:000}", newColor.h, newColor.s, newColor.v);
+            }
+            else
+            {
+                dataNode.InnerText = String.Format("{0:000}+{1:000}-{2:000}", newColor.h, newColor.s, -newColor.v);
+            }
         }
     }
     public class MyColorModifiers

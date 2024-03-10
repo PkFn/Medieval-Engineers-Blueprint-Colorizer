@@ -28,6 +28,7 @@ namespace ME_Grid_Color_Editor
             if(hue > 359) hue = 359;
             if (saturation > 1) saturation = 1;
             if (value > 1) value = 1;
+            if (value < 0) value = 0;
 
 
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
@@ -159,7 +160,7 @@ namespace ME_Grid_Color_Editor
             ColorToHSV(colorDialog1.Color, out h, out s, out v);
             hsv.h = (int)h;
             hsv.s = (int)(s * 100);
-            hsv.v = (int)(v * 100);
+            hsv.v = (int)(v * 100) - 70;
 
             if(hsv.h > 359) hsv.h = 359;
             if(hsv.s > 100) hsv.s = 100;
