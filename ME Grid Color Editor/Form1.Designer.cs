@@ -38,9 +38,9 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.pendingColorPanel = new System.Windows.Forms.Panel();
+            this.pendingColorLabel = new System.Windows.Forms.Label();
             this.buttonReplace = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.pendingColorLabel = new System.Windows.Forms.Label();
             this.selectedColorGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -137,16 +137,6 @@
             this.pendingColorPanel.TabIndex = 2;
             this.pendingColorPanel.Click += new System.EventHandler(this.pendingColor_Click);
             // 
-            // buttonReplace
-            // 
-            this.buttonReplace.Location = new System.Drawing.Point(12, 477);
-            this.buttonReplace.Name = "buttonReplace";
-            this.buttonReplace.Size = new System.Drawing.Size(506, 23);
-            this.buttonReplace.TabIndex = 7;
-            this.buttonReplace.Text = "Replace color";
-            this.buttonReplace.UseVisualStyleBackColor = true;
-            this.buttonReplace.Click += new System.EventHandler(this.buttonReplace_Click);
-            // 
             // pendingColorLabel
             // 
             this.pendingColorLabel.AutoSize = true;
@@ -157,6 +147,16 @@
             this.pendingColorLabel.Text = "Click here to pick required color";
             this.pendingColorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.pendingColorLabel.Click += new System.EventHandler(this.pendingColorLabel_Click);
+            // 
+            // buttonReplace
+            // 
+            this.buttonReplace.Location = new System.Drawing.Point(12, 477);
+            this.buttonReplace.Name = "buttonReplace";
+            this.buttonReplace.Size = new System.Drawing.Size(506, 23);
+            this.buttonReplace.TabIndex = 7;
+            this.buttonReplace.Text = "Replace color";
+            this.buttonReplace.UseVisualStyleBackColor = true;
+            this.buttonReplace.Click += new System.EventHandler(this.buttonReplace_Click);
             // 
             // Form1
             // 
@@ -170,7 +170,7 @@
             this.Controls.Add(this.selectedColorGroupBox);
             this.Controls.Add(this.fileButton);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "ME Blueprint Colorizer";
             this.MouseEnter += new System.EventHandler(this.Form1_MouseEnter);
             this.selectedColorGroupBox.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

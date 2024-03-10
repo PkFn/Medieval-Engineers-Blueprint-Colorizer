@@ -82,7 +82,10 @@ namespace ME_Grid_Color_Editor
 
             if (affectedBlockCount.Items.Count > 0)
             {
-                affectedBlockCount.SelectedIndex = 0;
+                if(affectedBlockCount.SelectedIndex < 0)
+                {
+                    affectedBlockCount.SelectedIndex = 0;
+                }
                 reloadColor();
             }
         }
