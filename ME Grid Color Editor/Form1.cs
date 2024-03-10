@@ -126,9 +126,9 @@ namespace ME_Grid_Color_Editor
                     MyMeHsv hsv = node.getColor();
 
                     affectedBlockNames.Items.Clear();
-                    foreach (MyCanvasBlock canvas in node.blocks)
+                    foreach(string name in node.affectedObjectsSubtypes)
                     {
-                        affectedBlockNames.Items.Add(canvas.ToString());
+                        affectedBlockNames.Items.Add(name);
                     }
 
                     fileColorPanel.BackColor = Color.FromArgb(0xFF, ColorFromHSV(hsv.h, 0.01 * hsv.s, 0.01 * hsv.v));

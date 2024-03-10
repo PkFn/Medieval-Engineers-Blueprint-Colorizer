@@ -66,47 +66,53 @@ namespace MEPaintedGroups
 
             if (canvasModifierComponent != null)
             {
-                foreach (XmlNode canvas in doc.GetElementsByTagName("Surfaces"))
+                foreach (XmlNode canvasSurface in doc.GetElementsByTagName("Surf"))
                 {
                     string color = "";
-                    foreach (XmlNode canvasProperties in canvas.ChildNodes)
+                    foreach (XmlNode canvasAttribute in canvasSurface.Attributes)
                     {
-                        switch (canvasProperties.Name)
+                        switch (canvasAttribute.Name)
                         {
-                            case "Surf":
+                            case "Color":
                                 {
-                                    foreach (XmlNode canvasAttribute in canvasProperties.Attributes)
+                                    color = canvasAttribute.InnerText;
+                                    string parentSubtype = "";
+
+                                    foreach(XmlNode definition in canvasSurface.ParentNode.ChildNodes)
                                     {
-                                        switch (canvasAttribute.Name)
+                                        if(definition.Name == "Definition")
                                         {
-                                            case "Color":
+                                            foreach(XmlNode attribute in  definition.Attributes)
+                                            {
+                                                if(attribute.Name == "Subtype")
                                                 {
-                                                    color = canvasAttribute.InnerText;
-                                                    break;
+                                                    parentSubtype = attribute.InnerText;
                                                 }
-                                            default: break;
+                                            }
                                         }
                                     }
+
+                                    bool existingColor = false;
+
+                                    foreach(MyCanvasColorNode colorNode in canvasColorNodes)
+                                    {
+                                        if(colorNode.hasSameColor(color))
+                                        {
+                                            colorNode.addCanvas(canvasAttribute, parentSubtype);
+                                            existingColor = true;
+                                        }
+                                    }
+
+                                    if(!existingColor)
+                                    {
+                                        canvasColorNodes.Add(new MyCanvasColorNode(color));
+                                        canvasColorNodes.Last().addCanvas(canvasAttribute, parentSubtype);
+                                    }
+
                                     break;
                                 }
                             default: break;
                         }
-                    }
-
-                    bool hasColor = false;
-                    foreach(MyCanvasColorNode colorNode in canvasColorNodes)
-                    {
-                        if(colorNode.hasSameColor(color))
-                        {
-                            colorNode.addCanvas(canvas);
-                            hasColor = true;
-                        }
-                    }
-
-                    if(!hasColor)
-                    {
-                        canvasColorNodes.Add(new MyCanvasColorNode(color));
-                        canvasColorNodes.Last().addCanvas(canvas);
                     }
                 }
             }

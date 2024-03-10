@@ -1,125 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Xml;
 using MEPaintedDefs;
 
 namespace MEPaintedCanvas
 {
-    public class MyCanvasBlock
-    {
-        public string a0 { get; private set; }
-        public string color { get; private set; }
-        public string subtype {  get; private set; }
-        XmlNode node;
-        public MyCanvasBlock(XmlNode colorNode)
-        {
-            foreach (XmlNode canvasProperties in colorNode.ChildNodes)
-            {
-                switch(canvasProperties.Name)
-                {
-                    case "Surf":
-                        {
-                            foreach (XmlNode canvasAttribute in canvasProperties.Attributes)
-                            {
-                                switch (canvasAttribute.Name)
-                                {
-                                    case "AO":
-                                        {
-                                            a0 = canvasAttribute.InnerText;
-                                            break;
-                                        }
-                                    case "Color":
-                                        {
-                                            node = canvasAttribute;
-                                            color = canvasAttribute.InnerText;
-                                            break;
-                                        }
-                                    default: break;
-                                }
-                            }
-                            break;
-                        }
-                    case "Definition":
-                        {
-                            foreach (XmlNode canvasAttribute in canvasProperties.Attributes)
-                            {
-                                if(canvasAttribute.Name == "Subtype")
-                                {
-                                    subtype = canvasAttribute.InnerText;
-                                }
-                            }
-                            break;
-                        }
-                    default:break;
-                }
-            }
-        }
-
-        public bool sameA0(string _a0)
-        {
-            return String.Equals(a0, _a0);
-        }
-
-        public bool hasColor(string _color)
-        {
-            return String.Equals(_color, _color);
-        }
-        public bool hasSubtype(string _subtype)
-        {
-            return String.Equals(_subtype, subtype);
-        }
-
-        public void changeColor(MyMeHsv newColor)
-        {
-            node.InnerText = String.Format("{0:000}+{1:000}+{2:000}", newColor.h, newColor.s, newColor.v);
-        }
-
-        public override string ToString()
-        {
-            return subtype;
-        }
-    }
     public class MyCanvasColorNode
     {
         string color;
         string myString = "";
-        public List<MyCanvasBlock> blocks { get; private set; }
         public List<string> affectedObjectsSubtypes { get; private set; }
+        List<XmlNode> colorNodes;
         public MyCanvasColorNode(string _color)
         {
             color = _color;
-            blocks = new List<MyCanvasBlock>();
+            colorNodes = new List<XmlNode>();
             affectedObjectsSubtypes = new List<string>();
         }
-        public void addCanvas(XmlNode colorNode)
+        public void addCanvas(XmlNode colorNode, string _subtype)
         {
-            MyCanvasBlock canvas = new MyCanvasBlock(colorNode);
+            colorNodes.Add(colorNode);
 
-            bool subtypeMatch = false;
-            foreach(MyCanvasBlock block in blocks)
+            foreach(string subtype in affectedObjectsSubtypes)
             {
-                if(block.hasSubtype(canvas.subtype))
+                if(String.Equals(subtype, _subtype))
                 {
-                    subtypeMatch = true;
+                    return;
                 }
             }
 
-            if(!subtypeMatch)
+            if(colorNodes.Count == 1)
             {
-                affectedObjectsSubtypes.Add(canvas.subtype);
-            }
-
-            blocks.Add(canvas);
-
-            if (blocks.Count == 1)
-            {
-                myString = String.Format("[Canvas] {0} : {1} surface", color, blocks.Count);
+                myString= String.Format("[Canvas] {0} : {1} surface", color, colorNodes.Count);
             }
             else
             {
-                myString = String.Format("[Canvas] {0} : {1} surfaces", color, blocks.Count);
+                myString = String.Format("[Canvas] {0} : {1} surfaces", color, colorNodes.Count);
             }
+
+            affectedObjectsSubtypes.Add(_subtype);
         }
 
         public bool hasSameColor(string _color)
@@ -129,9 +50,9 @@ namespace MEPaintedCanvas
 
         public void changeColor(MyMeHsv newColor)
         {
-            foreach(MyCanvasBlock canvas in blocks)
+            foreach(XmlNode canvas in colorNodes)
             {
-                canvas.changeColor(newColor);
+                canvas.InnerText = String.Format("{0:000}+{1:000}+{2:000}", newColor.h, newColor.s, newColor.v);
             }
         }
         public MyMeHsv getColor()
