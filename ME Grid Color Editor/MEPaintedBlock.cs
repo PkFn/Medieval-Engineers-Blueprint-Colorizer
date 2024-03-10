@@ -21,6 +21,7 @@ namespace MEPaintedBlock
     public class MyColorNode
     {
         string myString;
+        XmlNode dataNode;
         public string data { get; private set; }
         public int affectedObjects { get; private set; }
         public List<string> affectedObjectsIds { get; private set; }
@@ -78,6 +79,7 @@ namespace MEPaintedBlock
         }
         public MyColorNode(XmlNode colorNode)
         {
+            dataNode = null;
             affectedObjectsIds = new List<string>();
             affectedObjectsSubtypes = new List<string>();
             data = "";
@@ -89,6 +91,7 @@ namespace MEPaintedBlock
                 {
                     case "Data":
                         {
+                            dataNode = node;
                             data = node.InnerText;
                             break;
                         }
@@ -136,6 +139,7 @@ namespace MEPaintedBlock
                         affectedObjectsSubtypes.Add(buf);
                     }
                 }
+                affectedObjectsSubtypes.Sort();
             }
         }
 
@@ -157,11 +161,16 @@ namespace MEPaintedBlock
             catch
             {
                 col.h = 0;
-                col.s = 0;
-                col.v = 0;
+                col.s = 1;
+                col.v = 1;
             }
 
             return col;
+        }
+
+        public void changeColor(MyMeHsv newColor)
+        {
+            dataNode.InnerText = String.Format("{0:000.0}+{1:000.0}-{2:000.0}", newColor.h, newColor.s, newColor.v);
         }
     }
     public class MyColorModifiers

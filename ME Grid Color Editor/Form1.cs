@@ -24,6 +24,11 @@ namespace ME_Grid_Color_Editor
 
         public static Color ColorFromHSV(double hue, double saturation, double value)
         {
+            if(hue > 360) hue = 360;
+            if (saturation > 1) saturation = 1;
+            if (value > 1) value = 1;
+
+
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
             double f = hue / 60 - Math.Floor(hue / 60);
 
@@ -69,6 +74,10 @@ namespace ME_Grid_Color_Editor
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(affectedBlockCount.SelectedItem == null)
+            {
+                return;
+            }
             foreach (MyColorNode node in colorModifiers.colorNodes)
             {
                 if(node.isMyString(affectedBlockCount.SelectedItem.ToString()))
@@ -81,11 +90,36 @@ namespace ME_Grid_Color_Editor
                         affectedBlockNames.Items.Add(name);
                     }
 
-                    fileColorPanel.BackColor = Color.FromArgb(0xFF, ColorFromHSV(hsv.h, 0.01 * hsv.s, 1));
+                    fileColorPanel.BackColor = Color.FromArgb(0xFF, ColorFromHSV(hsv.h, 0.01 * hsv.s, 0.01 * hsv.v));
                     fileColorPanel.Update();
                     return;
                 }
             }
+        }
+
+        private void Form1_MouseEnter(object sender, EventArgs e)
+        {
+            if (pendingColorPanel.BackColor != colorDialog1.Color)
+            {
+                pendingColorPanel.BackColor = colorDialog1.Color;
+                pendingColorPanel.Update();
+
+                pendingColorLabel.ForeColor = colorDialog1.Color.GetSaturation() < 0.5f ? Color.White : Color.Black;
+            }
+        }
+        private void pendingColor_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+        }
+
+        private void pendingColorLabel_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+        }
+
+        private void buttonReplace_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
