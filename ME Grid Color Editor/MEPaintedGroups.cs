@@ -1,7 +1,10 @@
 using MEPaintedBlock;
 using MEPaintedCanvas;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.Xml;
+using System.Linq;
 
 namespace MEPaintedGroups
 {
@@ -15,6 +18,7 @@ namespace MEPaintedGroups
         {
             blockModifierComponent = null;
             blockColorNodes = new List<MyBlockColorNode>();
+            canvasColorNodes = new List<MyCanvasColorNode>();
 
             foreach (XmlNode component in doc.GetElementsByTagName("Component"))
             {
@@ -64,7 +68,46 @@ namespace MEPaintedGroups
             {
                 foreach (XmlNode canvas in doc.GetElementsByTagName("Surfaces"))
                 {
-                    //canvasColorNodes.Add(new MyCanvasColorNode(canvas));
+                    string color = "";
+                    foreach (XmlNode canvasProperties in canvas.ChildNodes)
+                    {
+                        switch (canvasProperties.Name)
+                        {
+                            case "Surf":
+                                {
+                                    foreach (XmlNode canvasAttribute in canvasProperties.Attributes)
+                                    {
+                                        switch (canvasAttribute.Name)
+                                        {
+                                            case "Color":
+                                                {
+                                                    color = canvasAttribute.InnerText;
+                                                    break;
+                                                }
+                                            default: break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            default: break;
+                        }
+                    }
+
+                    bool hasColor = false;
+                    foreach(MyCanvasColorNode colorNode in canvasColorNodes)
+                    {
+                        if(colorNode.hasSameColor(color))
+                        {
+                            colorNode.addCanvas(canvas);
+                            hasColor = true;
+                        }
+                    }
+
+                    if(!hasColor)
+                    {
+                        canvasColorNodes.Add(new MyCanvasColorNode(color));
+                        canvasColorNodes.Last().addCanvas(canvas);
+                    }
                 }
             }
         }

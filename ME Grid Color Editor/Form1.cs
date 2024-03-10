@@ -84,6 +84,11 @@ namespace ME_Grid_Color_Editor
                 affectedBlockCount.Items.Add(node.ToString());
             }
 
+            foreach(MyCanvasColorNode node in colorModifiers.canvasColorNodes)
+            {
+                affectedBlockCount.Items.Add(node.ToString());
+            }
+
             if (affectedBlockCount.Items.Count > 0)
             {
                 if(affectedBlockCount.SelectedIndex < 0)
@@ -106,6 +111,24 @@ namespace ME_Grid_Color_Editor
                     foreach (string name in node.affectedObjectsSubtypes)
                     {
                         affectedBlockNames.Items.Add(name);
+                    }
+
+                    fileColorPanel.BackColor = Color.FromArgb(0xFF, ColorFromHSV(hsv.h, 0.01 * hsv.s, 0.01 * hsv.v));
+                    fileColorPanel.Update();
+                    return;
+                }
+            }
+
+            foreach(MyCanvasColorNode node in colorModifiers.canvasColorNodes)
+            {
+                if(node.isMyString(affectedBlockCount.SelectedItem.ToString()))
+                {
+                    MyMeHsv hsv = node.getColor();
+
+                    affectedBlockNames.Items.Clear();
+                    foreach (MyCanvasBlock canvas in node.blocks)
+                    {
+                        affectedBlockNames.Items.Add(canvas.ToString());
                     }
 
                     fileColorPanel.BackColor = Color.FromArgb(0xFF, ColorFromHSV(hsv.h, 0.01 * hsv.s, 0.01 * hsv.v));
@@ -155,7 +178,7 @@ namespace ME_Grid_Color_Editor
 
         private void buttonReplace_Click(object sender, EventArgs e)
         {
-            if(affectedBlockCount.Items.Count == 0 || xmlDoc == null)
+            if (affectedBlockCount.Items.Count == 0 || xmlDoc == null)
             {
                 return;
             }
@@ -169,11 +192,33 @@ namespace ME_Grid_Color_Editor
             hsv.s = (int)(s * 100);
             hsv.v = (int)(v * 100) - 70;
 
-            if(hsv.h > 359) hsv.h = 359;
-            if(hsv.s > 100) hsv.s = 100;
-            if(hsv.v > 100) hsv.v = 100;
+            if (hsv.h > 359) hsv.h = 359;
+            if (hsv.s > 100) hsv.s = 100;
+            if (hsv.v > 100) hsv.v = 100;
 
             foreach (MyBlockColorNode node in colorModifiers.blockColorNodes)
+            {
+                if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
+                {
+                    node.changeColor(hsv);
+
+                    try
+                    {
+                        xmlTextReader.Close();
+                        xmlDoc.Save(openFileDialog1.FileName);
+                        xmlTextReader = new XmlTextReader(openFileDialog1.FileName);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Can't write to file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    reloadXml();
+                    return;
+                }
+            }
+
+            foreach (MyCanvasColorNode node in colorModifiers.canvasColorNodes)
             {
                 if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
                 {
