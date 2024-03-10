@@ -23,21 +23,21 @@ namespace MEPaintedCanvas
         {
             colorNodes.Add(colorNode);
 
-            foreach(string subtype in affectedObjectsSubtypes)
+            if (colorNodes.Count == 1)
+            {
+                myString = String.Format("[Canvas] {0} : {1} surface", color, colorNodes.Count);
+            }
+            else
+            {
+                myString = String.Format("[Canvas] {0} : {1} surfaces", color, colorNodes.Count);
+            }
+
+            foreach (string subtype in affectedObjectsSubtypes)
             {
                 if(String.Equals(subtype, _subtype))
                 {
                     return;
                 }
-            }
-
-            if(colorNodes.Count == 1)
-            {
-                myString= String.Format("[Canvas] {0} : {1} surface", color, colorNodes.Count);
-            }
-            else
-            {
-                myString = String.Format("[Canvas] {0} : {1} surfaces", color, colorNodes.Count);
             }
 
             affectedObjectsSubtypes.Add(_subtype);
