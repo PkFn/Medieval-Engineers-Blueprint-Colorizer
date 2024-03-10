@@ -15,6 +15,7 @@ namespace ME_Grid_Color_Editor
     public partial class Form1 : Form
     {
         XmlDocument xmlDoc;
+        XmlTextReader xmlTextReader;
         MyColorModifiers colorModifiers;
         public Form1()
         {
@@ -24,7 +25,7 @@ namespace ME_Grid_Color_Editor
 
         public static Color ColorFromHSV(double hue, double saturation, double value)
         {
-            if(hue > 360) hue = 360;
+            if(hue > 359) hue = 359;
             if (saturation > 1) saturation = 1;
             if (value > 1) value = 1;
 
@@ -64,8 +65,10 @@ namespace ME_Grid_Color_Editor
 
         private void reloadXml()
         {
+            xmlTextReader = new XmlTextReader(openFileDialog1.FileName);
             xmlDoc = new XmlDocument();
-            xmlDoc.Load(openFileDialog1.FileName);
+            xmlDoc.Load(xmlTextReader);
+
             colorModifiers = new MyColorModifiers(xmlDoc);
             colorModifiers.updateAffectedSubtypes(xmlDoc);
 
@@ -74,6 +77,12 @@ namespace ME_Grid_Color_Editor
             foreach (MyColorNode node in colorModifiers.colorNodes)
             {
                 affectedBlockCount.Items.Add(node.ToString());
+            }
+
+            if (affectedBlockCount.Items.Count > 0)
+            {
+                affectedBlockCount.SelectedIndex = 0;
+                reloadColor();
             }
         }
 
@@ -152,7 +161,7 @@ namespace ME_Grid_Color_Editor
             hsv.s = (int)(s * 100);
             hsv.v = (int)(v * 100);
 
-            if(hsv.h > 360) hsv.h = 360;
+            if(hsv.h > 359) hsv.h = 359;
             if(hsv.s > 100) hsv.s = 100;
             if(hsv.v > 100) hsv.v = 100;
 
@@ -160,14 +169,20 @@ namespace ME_Grid_Color_Editor
             {
                 if (node.isMyString(affectedBlockCount.SelectedItem.ToString()))
                 {
-                    node.changeColor(xmlDoc, openFileDialog1.FileName, hsv);
-                    reloadXml();
-                    if(affectedBlockCount.Items.Count > 0)
+                    node.changeColor(hsv);
+
+                    try
                     {
-                        affectedBlockCount.SelectedIndex = 0;
-                        reloadColor();
+                        xmlTextReader.Close();
+                        xmlDoc.Save(openFileDialog1.FileName);
+                        xmlTextReader = new XmlTextReader(openFileDialog1.FileName);
                     }
-                    
+                    catch
+                    {
+                        MessageBox.Show("Can't write to file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    reloadXml();
                     return;
                 }
             }

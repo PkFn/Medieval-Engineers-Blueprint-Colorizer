@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -168,10 +169,9 @@ namespace MEPaintedBlock
             return col;
         }
 
-        public void changeColor(XmlDocument doc, string filePath, MyMeHsv newColor)
+        public void changeColor(MyMeHsv newColor)
         {
             dataNode.InnerText = String.Format("{0:000}+{1:000}-{2:000}", newColor.h, newColor.s, newColor.v);
-            doc.Save(filePath);
         }
     }
     public class MyColorModifiers
